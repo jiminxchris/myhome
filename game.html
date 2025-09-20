@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>케이팝 데몬 데몬 헌터스 MBTI 테스트</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Orbitron:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #9f2fff; /* Neon Purple */
+            --secondary-color: #00e5ff; /* Neon Cyan */
+            --bg-color: #10101a;
+            --text-color: #f0f0f0;
+            --card-bg-color: #1a1a2e;
+            --border-color: #3a3a5e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nanum Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--card-bg-color);
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 0 30px rgba(159, 47, 255, 0.5);
+            padding: 30px 40px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        #result-title {
+             color: var(--secondary-color);
+             margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: var(--bg-color);
+            font-family: 'Nanum Gothic', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: none;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.7);
+        }
+        
+        .btn.retry-btn {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn.retry-btn:hover {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(159, 47, 255, 0.7);
+        }
+
+        #question-text {
+            min-height: 60px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        #progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.3s ease;
+        }
+        
+        .result-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 5px solid var(--secondary-color);
+            box-shadow: 0 0 20px var(--secondary-color);
+            object-fit: cover;
+            background-color: #fff;
+        }
+
+        #result-description {
+            font-size: 1rem;
+            background-color: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-color);
+            text-align: left;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 시작 화면 -->
+        <div id="start-screen" class="screen active">
+            <h1>K-POP<br>DEMON HUNTERS</h1>
+            <p>당신의 심장에 잠재된 데몬 헌터의 유형을 찾아보세요. 당신의 선택이 곧 당신의 무대가 됩니다.</p>
+            <button id="start-btn" class="btn">테스트 시작</button>
+        </div>
+
+        <!-- 질문 화면 -->
+        <div id="question-screen" class="screen">
+            <h2 id="question-number">Question #1</h2>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <p id="question-text"></p>
+            <button class="btn answer-btn" data-type=""></button>
+            <button class="btn answer-btn" data-type=""></button>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="result-screen" class="screen">
+            <h2>당신의 헌터 타입은...</h2>
+            <img id="result-image" src="https://placehold.co/150x150/9f2fff/10101a?text=Hunter" alt="헌터 이미지">
+            <h1 id="result-title"></h1>
+            <p id="result-mbti" style="font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.5rem;"></p>
+            <p id="result-description"></p>
+            <button id="retry-btn" class="btn retry-btn">다시하기</button>
+        </div>
+    </div>
+
+    <script>
+        const startScreen = document.getElementById('start-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        const startBtn = document.getElementById('start-btn');
+        const answerBtns = document.querySelectorAll('.answer-btn');
+        const retryBtn = document.getElementById('retry-btn');
+
+        const questionNumberEl = document.getElementById('question-number');
+        const progressBarEl = document.getElementById('progress-bar');
+        const questionTextEl = document.getElementById('question-text');
+        
+        const resultImageEl = document.getElementById('result-image');
+        const resultTitleEl = document.getElementById('result-title');
+        const resultMbtiEl = document.getElementById('result-mbti');
+        const resultDescriptionEl = document.getElementById('result-description');
+
+
+        // MBTI 질문 데이터
+        const questions = [
+            {
+                question: "데뷔 쇼케이스(첫 임무)가 끝난 후, 당신의 선택은?",
+                answers: [
+                    { text: "팬들과 함께하는 애프터파티에 참석해 에너지를 충전한다!", type: "E" },
+                    { text: "조용한 대기실에서 오늘의 무대를 복기하며 혼자만의 시간을 갖는다.", type: "I" }
+                ]
+            },
+            {
+                question: "새로운 악마의 출현! 정보를 수집하는 당신의 방식은?",
+                answers: [
+                    { text: "현장에 남겨진 발자국, 냄새 등 구체적인 증거부터 샅샅이 살핀다.", type: "S" },
+                    { text: "악마의 행동 패턴과 상징을 분석하며 숨겨진 의미를 파악한다.", type: "N" }
+                ]
+            },
+            {
+                question: "동료 헌터가 악마의 저주에 걸려 위험에 빠졌다. 당신의 판단은?",
+                answers: [
+                    { text: "임무 완수를 위해 냉정하게 상황을 분석하고 가장 효율적인 방법을 택한다.", type: "T" },
+                    { text: "동료를 구하는 것이 최우선! 팀의 사기와 감정을 고려하여 결정한다.", type: "F" }
+                ]
+            },
+            {
+                question: "다음 악마 토벌 작전 계획을 세울 때, 당신은?",
+                answers: [
+                    { text: "분 단위로 계획을 세우고, 각 멤버의 역할을 명확히 지정해야 마음이 편하다.", type: "J" },
+                    { text: "큰 틀만 정해두고, 현장 상황에 따라 유연하게 대처하는 것을 선호한다.", type: "P" }
+                ]
+            },
+            {
+                question: "유닛 활동을 하게 된다면?",
+                answers: [
+                    { text: "다양한 멤버들과 교류하며 시너지를 내는 대규모 유닛이 좋다.", type: "E" },
+                    { text: "마음 맞는 소수의 멤버와 깊은 유대감을 형성하는 소규모 유닛이 좋다.", type: "I" }
+                ]
+            },
+            {
+                question: "당신의 필살기는 어떤 스타일?",
+                answers: [
+                    { text: "수년간의 훈련으로 다져진, 현실적이고 강력한 물리 공격.", type: "S" },
+                    { text: "잠재력을 폭발시켜 미래를 예측하거나, 개념적인 힘을 다루는 공격.", type: "N" }
+                ]
+            },
+            {
+                question: "인간을 현혹하는 악마를 만났다. 설득의 방식은?",
+                answers: [
+                    { text: "악마의 논리적 허점을 파고들어, 행동의 모순을 지적한다.", type: "T" },
+                    { text: "악마에게 연민을 느끼고, 그가 왜 그런 행동을 하는지 공감하려 노력한다.", type: "F" }
+                ]
+            },
+            {
+                question: "무대(전투) 의상이 정해졌다. 당신의 반응은?",
+                answers: [
+                    { text: "정해진 컨셉과 의상에 맞춰 최고의 퍼포먼스를 준비하는 것에 집중한다.", type: "J" },
+                    { text: "무대 직전, 더 멋진 스타일을 위해 즉흥적으로 액세서리를 추가한다.", type: "P" }
+                ]
+            },
+            {
+                question: "팬 사인회(임무 보고회)에서 당신은?",
+                answers: [
+                    { text: "먼저 다가가 말을 걸고, 분위기를 주도하는 '인싸' 헌터.", type: "E" },
+                    { text: "팬(상관)의 말을 경청하고, 차분하게 답변하는 '아싸' 헌터.", type: "I" }
+                ]
+            },
+            {
+                question: "악마가 남긴 예언서. 당신은 어떻게 해석하는가?",
+                answers: [
+                    { text: "문자 그대로, 사실에 기반하여 예언의 내용을 실용적으로 분석한다.", type: "S" },
+                    { text: "행간의 의미와 상징을 파악하여, 예언에 담긴 거대한 그림을 그린다.", type: "N" }
+                ]
+            },
+            {
+                question: "악마에게 조종당하는 시민들을 발견했다. 당신의 선택은?",
+                answers: [
+                    { text: "더 큰 피해를 막기 위해, 소수의 희생은 감수해야 한다고 판단한다.", type: "T" },
+                    { text: "단 한 명의 무고한 희생도 없어야 한다! 모두를 구할 방법을 찾는다.", type: "F" }
+                ]
+            },
+            {
+                question: "갑작스러운 휴가! 어떻게 보낼 것인가?",
+                answers: [
+                    { text: "평소 가고 싶었던 곳, 하고 싶었던 일들을 리스트업해서 알차게 보낸다.", type: "J" },
+                    { text: "'일단 쉬자!' 아무 계획 없이, 그날의 기분에 따라 즉흥적으로 행동한다.", type: "P" }
+                ]
+            }
+        ];
+        
+        // MBTI 결과 데이터
+        const results = {
+            "ISTJ": { title: "절대음감의 전략가 헌터", description: "원칙과 논리를 바탕으로 한 치의 오차도 없는 완벽한 임무 수행을 자랑합니다. 당신의 계획에 따라 팀은 가장 안정적인 무대를 선보입니다." },
+            "ISFJ": { title: "팬들을 지키는 수호자 헌터", description: "동료와 팬들을 위해서라면 어떤 위험도 감수합니다. 당신의 따뜻한 마음과 헌신은 팀의 구심점 역할을 합니다." },
+            "INFJ": { title: "미래를 보는 예언가 헌터", description: "깊은 통찰력으로 악마의 계획과 무대의 흐름을 꿰뚫어 봅니다. 당신의 예지는 팀을 올바른 길로 인도하는 등대와 같습니다." },
+            "INTJ": { title: "컨셉의 설계자, 마스터마인드 헌터", description: "모든 작전과 무대 컨셉은 당신의 머릿속에서 탄생합니다. 거대한 그림을 그리고 판을 설계하는 능력이 타의 추종을 불허합니다." },
+            "ISTP": { title: "무대 위의 테크니션 헌터", description: "어떤 돌발 상황에서도 냉철함을 잃지 않고 최적의 해결책을 찾아냅니다. 당신의 손에선 어떤 장비든 최고의 무기가 됩니다." },
+            "ISFP": { title: "영혼을 치유하는 음유시인 헌터", description: "당신의 노래와 춤은 악마의 힘을 정화하고, 지친 영혼들을 치유합니다. 예술적 감성으로 팀의 감성을 책임집니다." },
+            "INFP": { title: "몽환적인 멜로디의 창조자 헌터", description: "악마조차 감화시키는 순수한 이상과 열정을 가졌습니다. 당신이 만들어내는 세상에 단 하나뿐인 멜로디는 가장 강력한 무기입니다." },
+            "INTP": { title: "고대 마법의 해독가 헌터", description: "복잡한 고대의 마법진이나 악마의 언어를 논리적으로 분석하고 해독하는 데 непревзойден한 재능을 보입니다. 지적 호기심이 당신의 원동력입니다." },
+            "ESTP": { title: "위기를 즐기는 승부사 헌터", description: "위험한 상황일수록 아드레날린을 느끼며, 과감한 행동으로 판을 뒤집습니다. 당신의 임기응변은 언제나 팀에게 승리를 안겨줍니다." },
+            "ESFP": { title: "무대를 지배하는 슈퍼스타 헌터", description: "타고난 스타성과 에너지로 관중(적들)의 시선을 사로잡습니다. 당신이 서는 곳이 바로 무대의 중심이며, 모든 스포트라이트를 받습니다." },
+            "ENFP": { title: "무대 위의 스파크, 카리스마 헌터", description: "긍정적인 에너지와 넘치는 열정으로 팀의 분위기 메이커 역할을 합니다. 당신의 독창적인 아이디어는 언제나 새로운 길을 열어줍니다." },
+            "ENTP": { title: "예측불허의 트릭스터 헌터", description: "정해진 규칙을 따르기보다, 재치와 기발함으로 악마를 혼란에 빠뜨리는 것을 즐깁니다. 당신과의 두뇌 싸움에서 이길 자는 없습니다." },
+            "ESTJ": { title: "퍼포먼스의 총괄 리더 헌터", description: "강력한 카리스마와 추진력으로 팀을 이끄는 리더입니다. 당신의 지휘 아래, 팀은 한 치의 흐트러짐 없는 완벽한 군무를 선보입니다." },
+            "ESFJ": { title: "사교의 중심, 커넥터 헌터", description: "끈끈한 팀워크와 팬들과의 소통을 가장 중요하게 생각합니다. 당신의 넓은 인맥과 친화력은 팀에 결정적인 도움을 가져옵니다." },
+            "ENFJ": { title: "팬들을 이끄는 선지자 헌터", description: "사람들을 이끄는 타고난 리더십과 언변을 가졌습니다. 당신의 연설은 절망에 빠진 이들에게 희망을 주고, 팀에게 승리의 확신을 심어줍니다." },
+            "ENTJ": { title: "성장을 추구하는 야망가 헌터", description: "끊임없이 더 높은 목표를 향해 자신과 팀을 채찍질합니다. 당신의 대담한 비전과 결단력은 팀을 최정상의 자리에 올려놓을 것입니다." }
+        };
+
+        let currentQuestionIndex = 0;
+        let mbtiScores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            mbtiScores = { E: 0, I: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+            startScreen.classList.remove('active');
+            resultScreen.classList.remove('active');
+            questionScreen.classList.add('active');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionNumberEl.textContent = `Question #${currentQuestionIndex + 1}`;
+            progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+            questionTextEl.textContent = currentQuestion.question;
+            
+            answerBtns.forEach((btn, index) => {
+                btn.textContent = currentQuestion.answers[index].text;
+                btn.dataset.type = currentQuestion.answers[index].type;
+            });
+        }
+
+        function selectAnswer(e) {
+            const selectedType = e.target.dataset.type;
+            mbtiScores[selectedType]++;
+            
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+        
+        function calculateResult() {
+            let result = "";
+            result += mbtiScores.E > mbtiScores.I ? "E" : "I";
+            result += mbtiScores.S > mbtiScores.N ? "S" : "N";
+            result += mbtiScores.T > mbtiScores.F ? "T" : "F";
+            result += mbtiScores.J > mbtiScores.P ? "P" : "P";
+            return result;
+        }
+
+        function showResult() {
+            const finalMbti = calculateResult();
+            const resultData = results[finalMbti];
+            
+            resultImageEl.src = `https://placehold.co/150x150/${getMbtiColor(finalMbti)}/10101a?text=${finalMbti}`;
+            resultTitleEl.textContent = resultData.title;
+            resultMbtiEl.textContent = finalMbti;
+            resultDescriptionEl.textContent = resultData.description;
+            
+            questionScreen.classList.remove('active');
+            resultScreen.classList.add('active');
+        }
+        
+        function getMbtiColor(mbti) {
+            // MBTI 유형별로 다른 색상 코드를 반환하여 이미지 생성
+            const colors = {
+                'NF': 'ff7675', // 코랄
+                'NT': '74b9ff', // 블루
+                'SJ': '55efc4', // 민트
+                'SP': 'fdcb6e', // 옐로우
+            };
+            const typeGroup = mbti.slice(1,3).includes('N') ? 
+                              (mbti.includes('F') ? 'NF' : 'NT') : 
+                              (mbti.includes('J') ? 'SJ' : 'SP');
+            return colors[typeGroup] || 'ffffff';
+        }
+
+        startBtn.addEventListener('click', startGame);
+        answerBtns.forEach(btn => btn.addEventListener('click', selectAnswer));
+        retryBtn.addEventListener('click', () => {
+             resultScreen.classList.remove('active');
+             startScreen.classList.add('active');
+        });
+
+    </script>
+</body>
+</html>
